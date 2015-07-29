@@ -12,8 +12,6 @@
     "express": "~4.13.1",
     "google-auth-library": "^0.9.6",
     "googleapis": "^2.1.1",
-    "imap": "^0.8.15",
-    "inbox": "^1.1.59",
     "jade": "~1.11.0",
     "morgan": "~1.6.1",
     "node-gmail-api": "^0.3.1",
