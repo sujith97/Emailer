@@ -2,12 +2,13 @@ var fs = require('fs'),
     readline = require('readline'),
     googleAuth = require('google-auth-library'),
     q = require('q'),
-    config = require('../config');
+    config = require('../config'),
+    path = require('path');
 
 var authProvider = function() {
   var SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'],
-  TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + '/.credentials/',
-  TOKEN_PATH = TOKEN_DIR + 'gmail-api-quickstart.json',
+  TOKEN_DIR = path.join( (process.env.HOME || process.env.USERPROFILE), '.credentials'),
+  TOKEN_PATH = path.join( TOKEN_DIR, 'gmail-api-quickstart.json'),
   oauth2Client = null,
   TOKEN_NOT_SET = true;
 
