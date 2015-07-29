@@ -1,6 +1,6 @@
 var config = {};
 
-config.emailId = process.env.emailId;
-config.password = process.env.password;
+config.id = process.env.id;
+config.tokenSaved = process.env.tokenSaved || false;
 
 module.exports = config;
