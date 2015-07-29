@@ -6,19 +6,22 @@ var express = require('express'),
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	authProvider.authenticate().then(function(auth) {
-		messageList.allUnread(auth).then(function(response) {
-			console.log(response);
-			res.render('index', { title: "Sujith", messages: response });
-		})
-	});
-  	
+	res.render("index.html");
 });
 
-router.get('/message/:id', function(req, res, next) {
+/* GET all email IDs. */
+router.get('/email', function(req, res, next) {
+  authProvider.authenticate().then(function(auth) {
+		messageList.allUnread(auth).then(function(response) {
+			res.json(response);
+		});
+	});
+});
+
+router.get('/email/:id', function(req, res, next) {
 	authProvider.authenticate().then(function(auth) {
 		messageMessage.getEmailById(auth, req.params.id).then(function(response) {
-			console.log("Message: \n", response.snippet);
+			res.json(response);
 		});
 	});
 });

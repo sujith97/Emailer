@@ -1,7 +1,14 @@
 doctype html
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+	head
+		title= title
+		link(rel='stylesheet', href='/bower_components/bootstrap/dist/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/stylesheets/style.css')
+	body
+		block content
+		script(type='application/javascript', src='/bower_components/jquery/jquery.min.js')
+		script(type='application/javascript', src='/bower_components/bootstrap/dist/js/bootstrap.min.js')
+		script(type='application/javascript', src='/bower_components/angular-ui-router/release/angular-ui-router.min.js')
+		script(type='application/javascript', src='javascripts/app.js')
+		script(type='application/javascript', src='javascripts/controllers/homeController.js')
+		script(type='application/javascript', src='javascripts/services/homeService.js')
