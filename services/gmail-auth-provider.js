@@ -6,19 +6,22 @@ var fs = require('fs'),
     path = require('path');
 
 var authProvider = function() {
-  var SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'],
+  var SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 
+                'https://www.googleapis.com/auth/gmail.compose', 
+                'https://www.googleapis.com/auth/gmail.modify'],
   TOKEN_DIR = path.join( (process.env.HOME || process.env.USERPROFILE), '.credentials'),
-  TOKEN_PATH = path.join( TOKEN_DIR, 'gmail-api-quickstart.json'),
+  TOKEN_PATH = path.join( TOKEN_DIR, 'gmail-api.json'),
   oauth2Client = null,
   TOKEN_NOT_SET = true;
 
   var service = {
-    authenticate: authenticate
+    authenticate: authenticate,
+    generateAndSaveToken: generateAndSaveToken
   }
 
   return service;
 
-  function initialize() {
+  function readClientSecret() {
     var deferred = q.defer();
     // Load client secrets from a local file.
     fs.readFile('client_secret.json', function processClientSecrets(err, content) {
@@ -39,10 +42,10 @@ var authProvider = function() {
       return doAuthenticate(oauth2Client);
     } else {
       console.log('Fetching GMail API configuration...');
-      return initialize().then(function(credentials) {
-        var clientSecret = credentials.installed.client_secret,
-            clientId = credentials.installed.client_id,
-            redirectUrl = credentials.installed.redirect_uris[0],
+      return readClientSecret().then(function(credentials) {
+        var clientSecret = credentials.web.client_secret,
+            clientId = credentials.web.client_id,
+            redirectUrl = credentials.web.redirect_uris[0],
             auth = new googleAuth();
         oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 
@@ -55,8 +58,12 @@ var authProvider = function() {
     var deferred = q.defer();
     if (TOKEN_NOT_SET && !(config.tokenSaved === 'true')) {
       console.log('Configured to extract token from Google.');
+      setTimeout(function() {
+        console.log('Resolving...');
+        deferred.resolve({requiresLogin: getNewToken(oauth2Client)});
+      }, 1);
       // Check if we have previously stored a token.
-      return getNewToken(oauth2Client);
+      return deferred.promise;
     } else if (TOKEN_NOT_SET && (config.tokenSaved === 'true')) {
       console.log('Configured to extract token from the file. Trying to extract the token from it.');
       var deferred = q.defer();
@@ -89,26 +96,25 @@ var authProvider = function() {
    *     client.
    */
   function getNewToken(oauth2Client) {
-    var deferred = q.defer();
     var authUrl = oauth2Client.generateAuthUrl({ access_type: 'offline', scope: SCOPES });
-    console.log('Authorize this app by visiting this url: ', authUrl);
-    var rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    console.log('Auth URL: ' + authUrl);
+    return authUrl;
+  }
 
-    rl.question('Enter the code from that page here: ', function(code) {
-      rl.close();
-      oauth2Client.getToken(code, function(err, token) {
-        if (err) {
-          deferred.reject('Error while trying to retrieve access token', err);
-        } else {
-          oauth2Client.credentials = token;
-          storeToken(token);
-          TOKEN_NOT_SET = false;
-          deferred.resolve(oauth2Client);
-        }
-      });
+  function generateAndSaveToken(code) {
+    var deferred = q.defer();
+    oauth2Client.getToken(code, function(err, token) {
+      if (err) {
+        deferred.reject('Error while trying to retrieve access token', err);
+      } else {
+        oauth2Client.credentials = token;
+        storeToken(token);
+        TOKEN_NOT_SET = false;
+        deferred.resolve(oauth2Client);
+      }
     });
     return deferred.promise;
-  }
+  };
 
   /**
    * Store token to disk be used in later program executions.

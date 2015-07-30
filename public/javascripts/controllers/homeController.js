@@ -2,8 +2,8 @@
 	angular.module("home.controller", ["home.service"])
 	.controller("homeController", HomeController);
 
-	HomeController.$inject = ["$state", "homeService", "$location"];
-	function HomeController($state, homeService, $location) {
+	HomeController.$inject = ["$state", "homeService", "$location", "$window"];
+	function HomeController($state, homeService, $location, $window) {
 		var vm = this;
 		vm.messages = [];
 		homeService.getAllEmailIds().then(function(response) {
@@ -15,6 +15,8 @@
 						}
 					});
 				});
+			} else if(response && response.requiresLogin) {
+				$window.location = response.requiresLogin;
 			}
 		});
 
