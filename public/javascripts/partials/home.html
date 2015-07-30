@@ -4,7 +4,8 @@
     <div class="row">
   		<div class="col-md-4">
   			<ul class="list-group">
-				  <li class="list-group-item hover" ng-click="homeCtrl.displayMessage(message)" data-ng-repeat="message in homeCtrl.messages | orderBy: 'date':true ">{{message.snippet}}</li>
+				  <li class="list-group-item hover" ng-click="homeCtrl.displayMessage(message)" 
+            data-ng-repeat="message in homeCtrl.messages | orderBy: 'date':true ">{{message.snippet}}</li>
 				</ul>
   		</div>
   		<div class="col-md-8">

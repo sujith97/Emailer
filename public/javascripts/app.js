@@ -1,7 +1,7 @@
 (function() {
 	angular.module("offmailer", ["ui.router", "ngSanitize", "home.controller"])
 	.config(["$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
-	  
+		
 	  $stateProvider
 	    .state('home', {
 	      url: '/',
